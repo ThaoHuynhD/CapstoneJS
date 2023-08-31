@@ -1,0 +1,2 @@
+url:"https://64e380ccbac46e480e78e305.mockapi.io/product"
+

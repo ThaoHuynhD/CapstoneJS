@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Page</title>
+    <!-- font awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- bootstrap css -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+      crossorigin="anonymous"
+    />
+    <!-- Main css -->
+    <link rel="stylesheet" href="../css/index.css" />
+  </head>
+
+  <body>
+    <div id="waiting-screen" class="d-none">
+      <div class="spinner-border text-warning" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    <header id="header">
+      <div class="container">
+        <nav class="navbar navbar-expand-lg">
+          <a class="navbar-brand" href="../index.html"
+            ><i class="fa-solid fa-robot"></i> Cyber Phone</a
+          >
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item active">
+                <i class="fa-solid fa-house"></i>
+                <a class="nav-link" href="../../index.html">
+                  Home <span class="sr-only">(current)</span></a
+                >
+              </li>
+              <li class="nav-item">
+                <i class="fa-solid fa-store"></i>
+                <a class="nav-link" href="../../customer/view/phoneStore.html">
+                  Store</a
+                >
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <section id="list">
+      <div class="container">
+        <div class="row" id="search-sort">
+          <div class="dropdown col-2 mb-2 mr-auto ml-0">
+            <button
+              class="btn btn-outline-purple dropdown-toggle"
+              type="button"
+              data-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Sort by
+            </button>
+            <div class="dropdown-menu">
+              <button
+                id="defaultButton"
+                class="dropdown-item active"
+                type="button"
+                onclick="fetchList()"
+              >
+                Default
+              </button>
+              <button
+                id="lowToHighButton"
+                class="dropdown-item"
+                type="button"
+                onclick="sortLowtoHigh()"
+              >
+                Price: low to high
+              </button>
+              <button
+                id="highToLowButton"
+                class="dropdown-item"
+                type="button"
+                onclick="sortHightoLow()"
+              >
+                Price: high to low
+              </button>
+            </div>
+          </div>
+          <div class="search col-9">
+            <div class="input-group mb-3">
+              <input
+                id="searchValue"
+                type="text"
+                class="form-control"
+                placeholder="Looking for..."
+                aria-label=""
+                aria-describedby="button-addon2"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-purple"
+                  type="button"
+                  id="button-addon2"
+                  onclick="searchValue()"
+                >
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="alert-searching col-12">
+            <div
+              class="alert alert-success d-none"
+              role="alert"
+              id="search-alert"
+            ></div>
+            <div
+              class="alert alert-warning d-none"
+              role="alert"
+              id="alertSearch"
+            ></div>
+          </div>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th colspan="6" class="table__name">
+                <div class="d-flex align-items-center justify-content-between">
+                  <span>Phone Management</span>
+                  <button
+                    class="btn btn-warning"
+                    onclick="showNewData()"
+                    data-toggle="modal"
+                    data-target="#myModal"
+                  >
+                    <i class="fa-solid fa-circle-plus pr-1"></i>Add Phone
+                  </button>
+                </div>
+              </th>
+            </tr>
+            <tr class="table-header">
+              <th class="item-th" scope="row">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Price</th>
+              <th class="" scope="col">Photo</th>
+              <th class="item-th" scope="col">Description</th>
+              <th class="item-th" scope="col">
+                <i class="fa-solid fa-gear"></i>Action
+              </th>
+            </tr>
+          </thead>
+          <tbody id="data-table"></tbody>
+        </table>
+        <div class="alert alert-light" role="alert">End of table.</div>
+        <div class="modal-list" id="">
+          <div
+            class="modal fade"
+            id="myModal"
+            data-backdrop="static"
+            data-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="myModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="myModalLabel">Add Phone</h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group d-none">
+                    <label for="">Product id</label>
+                    <input
+                      type="text"
+                      name=""
+                      id="itemId"
+                      class="form-control"
+                      placeholder="Id"
+                      readonly
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="">Product name</label>
+                    <input
+                      type="text"
+                      name=""
+                      id="itemName"
+                      class="form-control"
+                      placeholder="name"
+                    />
+                    <div
+                      class="alert alert-warning d-none mt-1 p-1"
+                      role="alert"
+                      id="alertName"
+                    ></div>
+                  </div>
+                  <div class="form-group">
+                    <label for="">Product price</label>
+                    <input
+                      type="number"
+                      name=""
+                      id="itemPrice"
+                      class="form-control"
+                      placeholder="price"
+                    />
+                    <div
+                      class="alert alert-warning d-none mt-1 p-1"
+                      role="alert"
+                      id="alertPrice"
+                    ></div>
+                  </div>
+                  <div class="form-group">
+                    <label for="">Product image link</label>
+                    <input
+                      type="text"
+                      name=""
+                      id="itemImg"
+                      class="form-control"
+                      placeholder="image link"
+                    />
+                    <div
+                      class="alert alert-warning d-none mt-1 p-1"
+                      role="alert"
+                      id="alertImg"
+                    ></div>
+                  </div>
+                  <div class="form-group">
+                    <label for="">Product description</label>
+                    <input
+                      type="text"
+                      name=""
+                      id="itemDesc"
+                      class="form-control"
+                      placeholder="idescription"
+                    />
+                    <div
+                      class="alert alert-warning d-none mt-1 p-1"
+                      role="alert"
+                      id="alertDesc"
+                    ></div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-purple"
+                    id="addBtn"
+                    onclick="addData()"
+                  >
+                    Add new
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-purple"
+                    id="updateBtn"
+                    onclick="updateData()"
+                  >
+                    Update
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger"
+                    data-dismiss="modal"
+                    onclick="clearModalAlert()"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer id="footer">
+      <div class="footer__top">
+        <div class="row">
+          <div class="col-md-1 col-lg-2"></div>
+          <p class="col-12 col-md-5 col-lg-4 p-0">
+            Get connected with us on social networks:
+          </p>
+          <ul class="col-12 col-md-5 col-lg-4">
+            <li>
+              <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+            </li>
+            <li>
+              <a href="#"><i class="fa-brands fa-twitter"></i></a>
+            </li>
+            <li>
+              <a href="#"><i class="fa-brands fa-google"></i></a>
+            </li>
+            <li>
+              <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            </li>
+            <li>
+              <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+            </li>
+            <li>
+              <a href="#"><i class="fa-brands fa-github"></i></a>
+            </li>
+          </ul>
+          <div class="col-md-1 col-lg-2"></div>
+        </div>
+      </div>
+      <div class="footer__main">
+        <div class="container">
+          <div class="row">
+            <div class="footer__item col-12 col-md-12 col-lg-4">
+              <ul class="quote">
+                <h6><i class="fa-solid fa-robot"></i>CYBER PHONE</h6>
+                <li>
+                  <p>
+                    We pride ourselves on our efficiency and hard work, but most
+                    of all our ability to source you the best quality and best
+                    value products and devices in the market.
+                  </p>
+                </li>
+              </ul>
+            </div>
+            <div class="footer__item col-6 col-md-3 col-lg-2">
+              <ul class="brands">
+                <h6>BRANDS</h6>
+                <li><a href="#">iPhone</a></li>
+                <li><a href="#">Samsung</a></li>
+                <li><a href="#">Xiaomi</a></li>
+                <li><a href="#">Oppo</a></li>
+              </ul>
+            </div>
+            <div class="footer__item col-6 col-md-3 col-lg-2">
+              <ul class="links">
+                <h6>USEFUL LINKS</h6>
+                <li><a href="#">Pricing</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="#">Orders</a></li>
+                <li><a href="#">Help</a></li>
+              </ul>
+            </div>
+            <div class="footer__item col-12 col-md-5 col-lg-4">
+              <ul class="contact">
+                <h6>CONTACT</h6>
+                <li>
+                  <a href="#"
+                    ><i class="fa-solid fa-house"></i>Da Nang, Thanh Khe, VN</a
+                  >
+                </li>
+                <li>
+                  <a href="#"
+                    ><i class="fa-solid fa-envelope"></i>cyberphone@mail.com</a
+                  >
+                </li>
+                <li>
+                  <a href="#"
+                    ><i class="fa-solid fa-phone"></i>+ 01 234 567 88</a
+                  >
+                </li>
+                <li>
+                  <a href="#"
+                    ><i class="fa-solid fa-print"></i>+ 01 234 567 89</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>© 2022 Copyright: <a href="#">Cyber Phone</a></p>
+      </div>
+    </footer>
+    <div id="backTop">
+      <a href="#" class="cd-top text-replace js-cd-top"
+        ><i class="fa-solid fa-arrow-up"></i
+      ></a>
+    </div>
+    <!-- axios js -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"
+      integrity="sha512-uMtXmF28A2Ab/JJO2t/vYhlaa/3ahUOgj1Zf27M5rOo8/+fcTUVH0/E0ll68njmjrLqOBjXM3V9NiPFL5ywWPQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <!-- bootstrap js -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+      crossorigin="anonymous"
+    ></script>
+    <!-- backToTop -->
+    <script src="../js/BackToToputil.js"></script>
+    <script src="../js/BackToTopmain.js"></script>
+    <!-- main js -->
+    <script type="module" src="../js/validate.js"></script>
+    <script type="module" src="../js/controller.js"></script>
+    <script type="module" src="../js/main.js"></script>
+  </body>
+</html>
