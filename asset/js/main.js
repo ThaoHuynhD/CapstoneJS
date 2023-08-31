@@ -65,6 +65,7 @@ window.searchList = () => {
     method: "GET",
   })
     .then((res) => {
+      console.log("1");
       list = res.data;
       console.log("🚀 ~ file: main.js:61 ~ .then ~ list:", list);
       let objSearch = list.filter((item) =>
@@ -77,6 +78,7 @@ window.searchList = () => {
       document.getElementById("search-alert").classList.remove("d-none");
     })
     .catch((err) => {
+      console.log("2");
       console.log("🚀 ~ file: main.js:62 ~ err:", err);
       turnSpinner();
     });

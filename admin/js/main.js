@@ -99,7 +99,9 @@ window.showNewData = () => {
 window.searchValue = () => {
   var search = document.getElementById("searchValue").value.trim();
   var isValid = checkSearch(search);
+  console.log("hi");
   if (!isValid) return;
+  console.log("there");
   var list = [];
   axios
     .get(url)
